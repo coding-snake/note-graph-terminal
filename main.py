@@ -1,6 +1,34 @@
 import json
+import os.path
+
+def create_default_json(file_path):
+    default_content = '''[
+    {
+        "id": 0,
+        "title": "root-node",
+        "type": "default",
+        "categ": [],
+        "req-prev": [],
+        "prev": [],
+        "next": [],
+        "opt": []
+    }
+]'''
+    try:
+        with open(file_path, 'w') as file:
+            file.write(default_content)
+        print(f"M: Json file created at '{file_path}'")
+    except Exception as e:
+        print(f"M: Failed to create json file due to {e}")
+
+
 
 def load_json(file_path):
+
+    if not os.path.exists(file_path):
+        print(f"M: File at '{file_path}' not found")
+        print(f"Creating file...")
+        create_default_json(file_path)
     try:
         with open(file_path, 'r') as file:
             data = json.load(file)
@@ -76,7 +104,89 @@ def new_node(file_path):
     save_json(file_path, data)
     print(f"M: New node added succesfully! \nid: {new_id} \ntitle: {new_title}")
 
+def add_rel(file_path):
+    data = load_json(file_path)
 
+    if data is None:
+        print("M: Data could not be loaded")
+        return
+
+    while True:
+        first_id = int(input("Enter id of first node: "))
+
+        first_node = None
+        for elem in data:
+            if elem["id"] == first_id:
+                first_node = elem
+                break
+
+        if first_node:
+            print(f"Note of an id {first_id}: {first_node["title"]}")
+            break
+        else:
+            print(f"Note with id {first_id} not found!")
+
+    options = [
+        "1) required previous",
+        "2) previous",
+        "3) next",
+        "4) optional"
+    ]
+
+    while True:
+        print("What relation would you like to add?")
+        for elem in options:
+            print(elem)
+        f_answer = int(input("---: "))
+
+        if 1 <= f_answer <= 4:
+            break
+
+    while True:
+        second_id = int(input("Enter id of second node: "))
+
+        second_node = None
+        for elem in data:
+            if elem["id"] == second_id:
+                second_node = elem
+                break
+
+        if first_node:
+            print(f"Note of an id {second_id}: {second_node["title"]}")
+            break
+        else:
+            print(f"Note with id {second_id} not found!")
+
+    if f_answer == 1:
+        print(f"The node {first_id}: {first_node["title"]}\nin a relation REQUIRED PREVIOUS with\nnode {second_id}: {second_node["title"]}")
+        first_node["req-prev"].append(second_id)
+        second_node["next"].append(first_id)
+    elif f_answer == 2:
+        print(
+            f"The node {first_id}: {first_node["title"]}\nin a relation PREVIOUS with\nnode {second_id}: {second_node["title"]}")
+        first_node["prev"].append(second_id)
+        second_node["next"].append(first_id)
+    elif f_answer == 3:
+        print(
+            f"The node {first_id}: {first_node["title"]}\nin a relation NEXT with\nnode {second_id}: {second_node["title"]}")
+        first_node["next"].append(second_id)
+        print("For the second node is this a relation REQUIRED PREVIOUS? (Y/n)")
+
+        tmp = ""
+        while tmp != "Y" and tmp != "n":
+            tmp = input()
+
+        if tmp == "Y":
+            second_node["req-prev"].append(first_id)
+        else:
+            second_node["prev"].append(first_id)
+    elif f_answer == 4:
+        print(
+            f"The node {first_id}: {first_node["title"]}\nin a relation OPTIONAL with\nnode {second_id}: {second_node["title"]}")
+        first_node["opt"].append(second_id)
+
+    save_json(file_path, data)
+    print(f"Nodes: \n{first_id} : {first_node["title"]} \n{second_id} : {second_node["title"]}\n UPDATED SUCCESFULLY")
 json_path = "data.json"
 
 print("Welcome to the note graph terminal!\nIf you are lost type 'help' to print out list of commands \nor type 'exit' to close the terminal")
@@ -84,7 +194,8 @@ print("Welcome to the note graph terminal!\nIf you are lost type 'help' to print
 commands = [
     "'exit' - exits the terminal",
     "'help' - prints out the list of commands",
-    "'add node' - adds another node"
+    "'add node' - adds another node",
+    "'add relation' - adds relation between two elements"
 ]
 
 answer = ""
@@ -98,6 +209,8 @@ while answer != "exit":
             print(c)
     elif answer == "add node":
         new_node(json_path)
+    elif answer == "add relation":
+        add_rel(json_path)
     else:
         print("If you are lost type 'help' to print out list of commands \nor type 'exit' to close the terminal")
 
