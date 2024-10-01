@@ -1,6 +1,89 @@
 {
-    "nodes": [],
-    "categories": [],
-    "nodes_to_categories": [],
+    "nodes": [
+        {
+            "id": 1,
+            "title": "how to create django project"
+        },
+        {
+            "id": 2,
+            "title": "how to create django feature"
+        },
+        {
+            "id": 3,
+            "title": "How to cook chiken soup"
+        },
+        {
+            "id": 4,
+            "title": "Mammoths"
+        },
+        {
+            "id": 5,
+            "title": "Unda"
+        }
+    ],
+    "categories": [
+        {
+            "id": 1,
+            "title": "django"
+        },
+        {
+            "id": 2,
+            "title": "features"
+        },
+        {
+            "id": 3,
+            "title": "cooking"
+        },
+        {
+            "id": 4,
+            "title": "cooking 2.0"
+        },
+        {
+            "id": 5,
+            "title": "surgeries"
+        },
+        {
+            "id": 5,
+            "title": "pretty 22"
+        },
+        {
+            "id": 6,
+            "title": "Alpha"
+        },
+        {
+            "id": 7,
+            "title": "animals"
+        }
+    ],
+    "nodes_to_categories": [
+        {
+            "node_id": 1,
+            "category_id": 1
+        },
+        {
+            "node_id": 2,
+            "category_id": 1
+        },
+        {
+            "node_id": 2,
+            "category_id": 2
+        },
+        {
+            "node_id": 3,
+            "category_id": 3
+        },
+        {
+            "node_id": 4,
+            "category_id": 6
+        },
+        {
+            "node_id": 4,
+            "category_id": 7
+        },
+        {
+            "node_id": 5,
+            "category_id": 0
+        }
+    ],
     "edges": []
 }
