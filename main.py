@@ -1,44 +1,44 @@
 import json
 import os.path
 
-def create_data_file(file_path):
-    f_content = '''{
+def create_data_file(f_file_path):
+    content = '''{
     "nodes": [],
     "categories": [],
     "nodes_to_categories": [],
     "edges": []
 }'''
     try:
-        with open(file_path, 'w') as file:
-            file.write(f_content)
-        print(f"M: Data file created at '{file_path}'")
+        with open(f_file_path, 'w') as file:
+            file.write(content)
+        print(f"M: Data file created at '{f_file_path}'")
     except Exception as e:
         print(f"M: Failed to create data file due to \n{e}")
 
-def read_data_file(file_path):
-    if not os.path.exists(file_path):
-        print(f"M: File at '{file_path}' not found")
-        print("M: Creating file...")
-        create_data_file(file_path)
+def read_data_file(f_file_path):
+    if not os.path.exists(f_file_path):
+        print(f"M: File at '{f_file_path}' not found")
+        print(f"M: Creating file...")
+        create_data_file(f_file_path)
     try:
-        with open(file_path, 'r') as file:
+        with open(f_file_path, 'r') as file:
             data = json.load(file)
             return data
     except FileNotFoundError:
-        print(f"M: File at '{file_path}' not found")
+        print(f"M: File at '{f_file_path}' not found")
         return None
 
-def update_data_file(file_path, data, indent = 4):
+def update_data_file(f_file_path, f_data, f_indent = 4):
     try:
-        with open(file_path, 'w') as file:
-            json.dump(data, file, indent=indent)
+        with open(f_file_path, 'w') as file:
+            json.dump(f_data, file, indent=f_indent)
     except Exception as e:
-        print(f"M: Failed to save data file at '{file_path}' due to \n{e}")
+        print(f"M: Failed to save data file at '{f_file_path}' due to \n{e}")
 
-def validate_and_fix_data_file(file_path):
+def validate_and_fix_data_file(f_file_path):
     def validate_and_fix_root_element(name_of_element):
         if name_of_element not in data:
-            print(f"M: The element '" + name_of_element + f"' not found at '{file_path}'")
+            print(f"M: The element '" + name_of_element + f"' not found at '{f_file_path}'")
             print(f"M: Adding " + name_of_element + "...")
             data[name_of_element] = []
             if name_of_element in data:
@@ -46,7 +46,7 @@ def validate_and_fix_data_file(file_path):
             else:
                 print(f"M: Failed to add " + name_of_element)
 
-    data = read_data_file(file_path)
+    data = read_data_file(f_file_path)
     if not isinstance(data, dict):
         print(f"M: The root element should be a dictionary")
     else:
@@ -55,23 +55,21 @@ def validate_and_fix_data_file(file_path):
         validate_and_fix_root_element("nodes_to_categories")
         validate_and_fix_root_element("edges")
 
-        update_data_file(file_path, data)
+        update_data_file(f_file_path, data)
 
-
-def find_next_id(data, list_name):
+def find_next_id(f_data, f_list_name):
     i = 0
-    for elem in data[list_name]:
+    for elem in f_data[f_list_name]:
         i = max(int(elem["id"]), i)
     i += 1
     return i
 
-def create_category(file_path, repeat = True):
-    data = read_data_file(file_path)
+def create_category(f_file_path, f_repeat = True):
+    data = read_data_file(f_file_path)
 
     if data is None:
         print('M: Data could not be loaded')
         return
-
 
     category_list = []
     loop_active = True
@@ -89,7 +87,7 @@ def create_category(file_path, repeat = True):
         category["title"] = title
         category_list.append(category)
 
-        if repeat:
+        if f_repeat:
             while True:
                 print("Would you like to add another category? (Y/n)")
                 ans = input()
@@ -107,9 +105,9 @@ def create_category(file_path, repeat = True):
     for elem in category_list:
         data["categories"].append(elem)
 
-    update_data_file(file_path, data)
+    update_data_file(f_file_path, data)
 
-    data = read_data_file(file_path)
+    data = read_data_file(f_file_path)
 
     for elem in category_list:
         success = False
@@ -123,7 +121,7 @@ def create_category(file_path, repeat = True):
         else:
             print("M: Category could not be added")
 
-def create_node(file_path):
+def create_node(f_file_path):
     def add_category():
         category_title = input("Enter the title: ")
         title_exists = False
@@ -146,17 +144,17 @@ def create_node(file_path):
             data["categories"].append(category)
 
             title_exists = False
-            for categ in data["categories"]:
-                if categ["title"] == category_title:
+            for elemx in data["categories"]:
+                if elemx["title"] == category_title:
                     title_exists = True
-                    category_ids.append(categ["id"])
+                    category_ids.append(elemx["id"])
                     break
 
             if title_exists:
                 print(f"M: Category '{category_title}' added succesfuly!")
             else:
                 print(f"M: Category '{category_title}' could not be added")
-    data = read_data_file(file_path)
+    data = read_data_file(f_file_path)
 
     if data is None:
         print("M: Data could not be loaded")
@@ -184,11 +182,8 @@ def create_node(file_path):
             distinct_category = False
             break
 
-    update_data_file(file_path, data)
-
     if distinct_category:
 
-        data = read_data_file(file_path)
         category_ids = []
 
         add_category()
@@ -212,16 +207,86 @@ def create_node(file_path):
 
             data["nodes_to_categories"].append(node_category)
 
-        update_data_file(file_path, data)
+        update_data_file(f_file_path, data)
     else:
-        data = read_data_file(file_path)
         node_category = {
             "node_id" : node["id"],
             "category_id" : 0
         }
-        data["nodes_to_categories"].append(node_category)
-        update_data_file(file_path, data)
 
+        root_categ_exists = False
+        for obj in data["categories"]:
+            if obj["id"] == 0:
+                root_categ_exists = True
+                break
+
+        if not root_categ_exists:
+            data["categories"].append({"id" : 0, "title" : "root"})
+
+        data["nodes_to_categories"].append(node_category)
+        update_data_file(f_file_path, data)
+
+def create_edge(f_file_path):
+    data = read_data_file(f_file_path)
+    source_node = input("Enter the title of source node: ")
+    target_node = input("Enter the title of target node: ")
+
+    if source_node == target_node:
+        print("M: You can not connect one node to itself!")
+        return
+
+    relations = [
+        "(1) dual",
+        "(2) optional",
+        "(3) required"
+    ]
+    while True:
+        print("What type of relation do you want to implement?")
+        for elem in relations:
+            print(elem)
+
+        ans = int(input())
+
+        if 0 < ans < len(relations):
+            break
+    relation_name = relations[ans - 1]
+    relation_name = relation_name[4:]
+
+    source_exist = False
+    target_exist = False
+
+    source_id = 0
+    target_id = 0
+
+    for elem in data["nodes"]:
+        if elem["title"] == source_node:
+            source_exist = True
+            source_id = elem["id"]
+            continue
+        elif elem["title"] == target_node:
+            target_exist = True
+            target_id = elem["id"]
+            continue
+        if source_exist and target_exist:
+            break
+    if target_exist and source_exist:
+        print("M: Source node and target node found!")
+
+        edge = {
+            "id" : find_next_id(data, "edges"),
+            "source_node_id" : source_id,
+            "target_node_id" : target_id,
+            "relation_type" : relation_name
+        }
+        data["edges"].append(edge)
+        update_data_file(f_file_path, data)
+
+    else:
+        if not source_exist:
+            print("M: Source node does not exist")
+        if not target_exist:
+            print("M: Target node does not exist")
+        return
 # -------- MAIN FUNCTION --------
 
 data_path = "data.json"
@@ -236,8 +301,9 @@ print("or type 'exit' to close the terminal")
 commands = [
     "'help' - prints out the list of commands",
     "'exit' - exits the terminal",
-    "'create node' - created a node",
-    "'create category' - create a category"
+    "'create node' - creates a node",
+    "'create category' - creates a category",
+    "'create edge' - creates an edge between nodes"
 ]
 
 answer = ""
@@ -253,6 +319,8 @@ while answer != "exit":
         create_node(data_path)
     elif answer == "create category":
         create_category(data_path)
+    elif answer == "create edge":
+        create_edge(data_path)
     else:
         print("If you are lost type 'help' to get a list of commands")
         print("or type 'exit' to close the terminal")

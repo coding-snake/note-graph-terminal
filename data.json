@@ -19,6 +19,22 @@
         {
             "id": 5,
             "title": "Unda"
+        },
+        {
+            "id": 6,
+            "title": "shooting an arrow"
+        },
+        {
+            "id": 7,
+            "title": "manipulation"
+        },
+        {
+            "id": 8,
+            "title": "dancing"
+        },
+        {
+            "id": 9,
+            "title": "dancing"
         }
     ],
     "categories": [
@@ -53,6 +69,14 @@
         {
             "id": 7,
             "title": "animals"
+        },
+        {
+            "id": 8,
+            "title": "hobby"
+        },
+        {
+            "id": 0,
+            "title": "root"
         }
     ],
     "nodes_to_categories": [
@@ -83,7 +107,30 @@
         {
             "node_id": 5,
             "category_id": 0
+        },
+        {
+            "node_id": 6,
+            "category_id": 8
+        },
+        {
+            "node_id": 7,
+            "category_id": 0
+        },
+        {
+            "node_id": 8,
+            "category_id": 0
+        },
+        {
+            "node_id": 9,
+            "category_id": 0
         }
     ],
-    "edges": []
+    "edges": [
+        {
+            "id": 1,
+            "source_node_id": 1,
+            "target_node_id": 2,
+            "relation_type": "dual"
+        }
+    ]
 }
